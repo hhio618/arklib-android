@@ -36,12 +36,13 @@ private external fun createLinkFileNative(
     title: String,
     desc: String,
     url: String,
+    rootPath: String,
     basePath: String,
     downloadPreview: Boolean
 )
 
 private external fun loadLinkFileNative(rootPath: String, filePath: String): String
-private external fun loadLinkPreviewNative(rootPath: String, filePath: String): ByteArray?
+private external fun loadLinkPreviewNative(url: String): ByteArray?
 private external fun getLinkHashNative(url: String): String
 private external fun fetchLinkDataNative(url: String): LinkData?
 private external fun pdfPreviewGenerateNative(path: String, quality: String): Bitmap
@@ -57,7 +58,7 @@ fun createLinkFile(
     basePath: String,
     downloadPreview: Boolean
 ) {
-    return createLinkFileNative(title, desc, url, basePath, downloadPreview)
+    return createLinkFileNative(title, desc, url, rootPath, basePath, downloadPreview)
 }
 
 fun loadLinkFile(rootPath: String, filePath: String): String {
@@ -76,8 +77,8 @@ fun pdfPreviewGenerate(path: String, previewQuality: PreviewQuality): Bitmap {
     return pdfPreviewGenerateNative(path, previewQuality.name)
 }
 
-fun loadLinkPreview(rootPath: String, filePath: String): ByteArray? {
-    return loadLinkPreviewNative(rootPath, filePath)
+fun loadLinkPreview(url: String): ByteArray? {
+    return loadLinkPreviewNative(url)
 }
 
 // Initialize Rust Library Logging

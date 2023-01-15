@@ -46,6 +46,5 @@ class PDFGenTest {
         pdfData.compress(Bitmap.CompressFormat.PNG, 100, out);
         out.flush()
         out.close()
-
     }
 }

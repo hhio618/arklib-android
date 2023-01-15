@@ -16,7 +16,8 @@ import space.taran.arklib.fetchLinkData
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
-data class Link(val title: String, val desc: String, val url: String)
+data class Meta(val title: String, val desc: String)
+data class Link(val url: String, val meta: Meta)
 
 
 @RunWith(AndroidJUnit4::class)
@@ -33,15 +34,17 @@ class LinkTest {
         val url = "https://example.com/"
         val linkHash = getLinkHash(url)
         val rootPath = Path("${appContext.cacheDir}/tmp/")
-        val filePath = Path("${appContext.cacheDir}/tmp/dir1/${linkHash}.link")
-        for (downloadPreview in listOf<Boolean>(true, false)){
-            createLinkFile("title", "desc", url, rootPath, filePath.parent.pathString, downloadPreview)
+        val filePath = Path("${appContext.cacheDir}/tmp/${linkHash}.link")
+        for (downloadPreview in listOf(true, false)){
+            createLinkFile("title", "desc", url, rootPath.pathString, filePath.parent.pathString, downloadPreview)
             val linkJson = loadLinkFile(rootPath.pathString, filePath.pathString)
-            val linkPreview = loadLinkPreview(rootPath.pathString, filePath.pathString)
+            val linkPreview = loadLinkPreview(url)
             val link = Klaxon().parse<Link>(linkJson)
             assertNotNull(link)
-            assertEquals(link?.title, "title")
-            assertEquals(link?.desc, "desc")
+
+            assertEquals(link?.meta?.title, "title")
+            assertEquals(link?.meta?.desc, "desc")
+
             assertEquals(link?.url, url)
             if (downloadPreview){
                 assertNotNull(linkPreview)

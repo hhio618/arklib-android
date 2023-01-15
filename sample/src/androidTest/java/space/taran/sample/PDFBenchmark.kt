@@ -34,7 +34,7 @@ class PDFBenchmark {
     val mainActivityRule = ActivityTestRule(MainActivity::class.java)
     @Test
     fun benchmark_pdf_bulk() {
-        if (true) {
+        if (BuildConfig.PdfBenchmark) {
             val appContext = InstrumentationRegistry
                 .getInstrumentation()
                 .targetContext
@@ -52,6 +52,10 @@ class PDFBenchmark {
             }
             val duration_native = LongArray(files.size)
             val duration_java = LongArray(files.size)
+
+            // We need to make an initial call before our testing
+            // so that the arklib library initialized with the proper data.
+            gen_pdf_native(appContext, files[0])
             for (i in files.indices){
                 duration_native[i] = measureTimeMillis {gen_pdf_native(appContext, files[i])}
                 duration_java[i] = measureTimeMillis { gen_pdf_java(appContext, files[i])}

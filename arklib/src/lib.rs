@@ -95,8 +95,8 @@ pub mod android {
     #[no_mangle]
     pub extern "C" fn Java_space_taran_arklib_LibKt_loadLinkFileNative(env: JNIEnv,
         _: JClass,
-        jni_file_path: JString,
         jni_root_path: JString,
+        jni_file_path: JString,
     ) -> jstring {
         let file_path: String = env
             .get_string(jni_file_path)
@@ -108,9 +108,9 @@ pub mod android {
         trace!("Received file path: {}", path.display());
 
         let root_path_str: String = env
-        .get_string(jni_root_path)
-        .expect("Failed to parse input root path")
-        .into();
+            .get_string(jni_root_path)
+            .expect("Failed to parse input root path")
+            .into();
         let root_path: &Path = Path::new(&root_path_str);
 
         trace!("Received root path: {}", root_path.display());
@@ -137,7 +137,7 @@ pub mod android {
             .expect("Failed to parse input url")
             .into();
 
-        trace!("Received file path: {}", file_path);
+        trace!("Received url: {}", url);
 
         let linkPreview = Link::get_preview_synced(url).expect("get OpenGraph preview").fetch_image_synced();
         match linkPreview {
@@ -247,9 +247,9 @@ pub mod android {
         trace!("Received file path: {}", path.display());
 
         let root_path_str: String = env
-        .get_string(jni_root_path)
-        .expect("Failed to parse input root path")
-        .into();
+            .get_string(jni_root_path)
+            .expect("Failed to parse input root path")
+            .into();
         let root_path: &Path = Path::new(&root_path_str);
 
         trace!("Received root path: {}", root_path.display());
