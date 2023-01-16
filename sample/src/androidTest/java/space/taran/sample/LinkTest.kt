@@ -13,8 +13,9 @@ import space.taran.arklib.getLinkHash
 import space.taran.arklib.loadLinkFile
 import space.taran.arklib.loadLinkPreview
 import space.taran.arklib.fetchLinkData
-import kotlin.io.path.Path
-import kotlin.io.path.pathString
+import space.taran.arklib.computeId
+import java.io.File
+import kotlin.io.path.*
 
 data class Meta(val title: String, val desc: String)
 data class Link(val url: String, val meta: Meta)
@@ -31,14 +32,13 @@ class LinkTest {
             .getInstrumentation()
             .targetContext
 
-        val url = "https://example.com/"
+        val url = "https://google.com/"
         val linkHash = getLinkHash(url)
         val rootPath = Path("${appContext.cacheDir}/tmp/")
         val filePath = Path("${appContext.cacheDir}/tmp/${linkHash}.link")
         for (downloadPreview in listOf(true, false)){
             createLinkFile("title", "desc", url, rootPath.pathString, filePath.parent.pathString, downloadPreview)
             val linkJson = loadLinkFile(rootPath.pathString, filePath.pathString)
-            val linkPreview = loadLinkPreview(url)
             val link = Klaxon().parse<Link>(linkJson)
             assertNotNull(link)
 
@@ -46,11 +46,20 @@ class LinkTest {
             assertEquals(link?.meta?.desc, "desc")
 
             assertEquals(link?.url, url)
-            if (downloadPreview){
-                assertNotNull(linkPreview)
-            }else{
-                assertNull(linkPreview)
+            val linkPreview = loadLinkPreview(url)
+            val id = computeId(filePath.fileSize(), filePath)
+            val previewPath = rootPath
+                .resolve(".ark")
+                .resolve("previews")
+                .resolve(id.toString())
+            if (previewPath.exists())
+                {
+                    assertEquals(downloadPreview, true)
+                } else {
+                    assertEquals(downloadPreview, false)
             }
+            previewPath.deleteIfExists()
+
         }
         val linkData = fetchLinkData(url)
         assertNotNull(linkData)

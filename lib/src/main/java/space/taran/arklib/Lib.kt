@@ -29,6 +29,10 @@ data class ResourceId(
         fun create(file_size: Long, crc32: Long): ResourceId =
             ResourceId(file_size, crc32)
     }
+
+    override fun toString(): String {
+        return "${file_size}-${crc32}"
+    }
 }
 
 private external fun computeIdNative(size: Long, file: String): ResourceId
